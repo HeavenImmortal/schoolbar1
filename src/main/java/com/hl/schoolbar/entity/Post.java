@@ -63,16 +63,6 @@ public class Post implements Serializable {
      */
     private Long createDate;
 
-    /**
-     * 点赞数
-     */
-    private Integer praiseNum;
-
-    /**
-     * 点踩数
-     */
-    @TableField("step_on_num")
-    private Integer stepOnNum;
 
     /**
      * 是否删除

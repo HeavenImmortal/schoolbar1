@@ -72,4 +72,14 @@ public interface PostService extends IService<Post> {
      * @return
      */
     Result selComment(Integer postId,Integer type);
+
+    /**
+     * 对点赞或点踩进行操作
+     * @param userId
+     * @param postId
+     * @param type 1.表示点赞 0表示点踩
+     * @param operationType 1表示点击 0表示取消
+     * @return
+     */
+    Result gradeOperation(Integer userId,Integer postId,Integer type,Integer operationType);
 }

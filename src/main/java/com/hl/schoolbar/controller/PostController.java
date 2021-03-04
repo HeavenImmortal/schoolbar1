@@ -162,9 +162,20 @@ public class PostController {
             @ApiImplicitParam(paramType="query", name = "postId", value = "贴子id", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "type", value = "查询方式 1由新到旧 0由旧到新", required = true, dataType = "Integer"),
     })
-    @RequestMapping(value = "/selComment",method = RequestMethod.POST)
+    @RequestMapping(value = "/selComment",method = RequestMethod.GET)
     public Result selComment(Integer postId,Integer type){
         return postServiceImpl.selComment(postId, type);
     }
 
+    @ApiOperation(value="查询评论", notes="get请求")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType="query", name = "postId", value = "贴子id", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "userId", value = "用户id", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "type", value = "1点赞数 0点踩数", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "operationType", value = "操作类型 1点击 0 取消", required = true, dataType = "Integer"),
+    })
+    @RequestMapping(value = "/gradeOperation",method = RequestMethod.GET)
+    public Result gradeOperation(Integer userId, Integer postId, Integer type, Integer operationType){
+        return postServiceImpl.gradeOperation(userId, postId, type, operationType);
+    }
 }

@@ -63,6 +63,20 @@ public interface PostMapper extends BaseMapper<Post> {
     int selCommentNum(@Param("postId")Integer postId);
 
     /**
+     * 查询贴子点赞数
+     * @param postId
+     * @return
+     */
+    int selPostPraiseNum(@Param("postId")Integer postId);
+
+    /**
+     * 查询贴子点踩数
+     * @param postId
+     * @return
+     */
+    int selPostStepOnNum(@Param("postId")Integer postId);
+
+    /**
      * 查询主评论
      * @param postId
      * @param type 1表示由新到旧 0表示由旧到新
@@ -90,4 +104,24 @@ public interface PostMapper extends BaseMapper<Post> {
      * @return
      */
     int insComment(@Param("comment")Comment comment);
+
+
+    /**
+     * 用户点赞或点踩
+     * @param userId
+     * @param postId
+     * @param type 1为点赞 0为点踩
+     * @return
+     */
+    int insUserPostGrade(@Param("userId")Integer userId,@Param("postId")Integer postId,@Param("type")Integer type);
+
+    /**
+     * 用户取消点赞或点踩
+     * @param userId
+     * @param postId
+     * @param type 1为点赞 0为点踩
+     * @return
+     */
+    int delUserPostGrade(@Param("userId")Integer userId,@Param("postId")Integer postId,@Param("type")Integer type);
+
 }

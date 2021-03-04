@@ -7,8 +7,6 @@
         select a.post_id postId,
         a.title title,
         a.description description,
-        a.praise_num praiseNum,
-        a.step_on_num setpOnNum,
         b.username username,
         c.school_name schoolName
         from tb_post a
@@ -36,8 +34,6 @@
         a.description description,
         a.content_mkd contentMkd,
         a.content_html contentHtml,
-        a.praise_num praiseNum,
-        a.step_on_num setpOnNum,
         b.username username,
         c.school_name schoolName
         from tb_post a
@@ -49,8 +45,7 @@
     <!--添加贴子-->
     <insert id="insPost" parameterType="com.hl.schoolbar.entity.Post" useGeneratedKeys="true" keyProperty="postId">
         insert into tb_post values (default ,#{post.title},#{post.description}
-        ,#{post.contentMkd},#{post.contentHtml},#{post.userId},#{post.schoolId},#{post.createDate}
-        ,#{post.praiseNum},#{post.stepOnNum},#{post.isDelete})
+        ,#{post.contentMkd},#{post.contentHtml},#{post.userId},#{post.schoolId},#{post.createDate},#{post.isDelete})
     </insert>
 
     <!--修改贴子-->
@@ -68,6 +63,16 @@
     <!--查询评论数-->
     <select id="selCommentNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         select count(1) from tb_comment where post_id = #{postId}
+    </select>
+
+    <!--查询点赞数-->
+    <select id="selPostPraiseNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from tb_post_grade where type = 1 and post_id = #{postId};
+    </select>
+
+    <!--查询点踩数-->
+    <select id="selPostStepOnNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from tb_post_grade where type = 1 and post_id = #{postId};
     </select>
 
     <!--删除评论-->
@@ -103,4 +108,14 @@
     </select>
 
     <!--查询子评论-->
+
+    <!--用户点赞或点踩-->
+    <insert id="insUserPostGrade">
+        insert into tb_post_grade values (default ,#{userId},#{postId},#{type})
+    </insert>
+
+    <!--用户取消点赞或点踩-->
+    <delete id="delUserPostGrade" >
+        delete from tb_post_grade where type=#{type} and user_id=#{userId} and post_id = #{postId}
+    </delete>
 </mapper>
