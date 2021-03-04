@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hl.schoolbar.mapper.SysUserMapper">
+
+    <!--添加用户-->
+    <insert id="insSysUser" parameterType="com.hl.schoolbar.entity.SysUser">
+        insert into tb_sys_user values (default,#{sysUser.sysUserAccount},#{sysUser.sysUsername}
+         ,#{sysUser.password},#{sysUser.roleId},#{sysUser.salt},#{sysUser.phone},#{sysUser.sex}
+         ,#{sysUser.age},#{sysUser.createDate},#{sysUser.isDelete})
+    </insert>
+
+    <!--通过账号查询用户-->
+    <select id="selSysUserByUserAccount" parameterType="java.lang.String" resultType="java.util.HashMap">
+        select a.sys_user_id sysUserId,
+        a.sys_user_account sysUserAccount,
+        a.sys_username sysUsername,
+        a.password password,
+        a.role_id roleId,
+        a.salt salt,
+        a.phone phone,
+        a.sex sex,
+        a.age age,
+        a.create_date createDate,
+        b.role_name roleName
+        from tb_sys_user a join tb_role b on a.role_id = b.role_id
+        where a.is_delete = 0 and a.sys_user_account = #{userAccount};
+    </select>
+
+    <!--通过角色id查询权限-->
+    <select id="selPermissionByRoleId" parameterType="java.lang.Integer" resultType="com.hl.schoolbar.entity.Permission">
+        select * from  tb_permission a join tb_role_permission b on a.permission_id = b.permission_id where b.role_Id = #{roleId}
+    </select>
+
+    <!--分页查询用户-->
+    <select id="selPageSysUser" parameterType="com.hl.schoolbar.utils.SysUserQueryConditions" resultType="java.util.HashMap">
+        select a.sys_user_id sysUserId,
+        a.sys_user_account sysUserAccount,
+        a.sys_username sysUsername,
+        a.role_id roleId,
+        a.phone phone,
+        a.sex sex,
+        a.age age,
+        a.create_date createDate,
+        b.role_name roleName
+        from tb_sys_user a join tb_role b on a.role_id = b.role_id
+        where a.is_delete = 0
+        <if test="sysUserQueryConditions.sysUsername!=null and sysUserQueryConditions.sysUsername!=''">
+            and a.sys_username like "%"#{sysUserQueryConditions.sysUsername}"%"
+        </if>
+        <if test="sysUserQueryConditions.roleId!=null and sysUserQueryConditions.roleId!=''">
+            and a.role_id = #{sysUserQueryConditions.roleId}
+        </if>
+        <if test="sysUserQueryConditions.phone!=null and sysUserQueryConditions.phone!=''">
+            and a.phone like "%"#{sysUserQueryConditions.phone}"%"
+        </if>
+    </select>
+
+    <!--查询所有角色-->
+    <select id="selAllRole" resultType="java.util.HashMap">
+        select role_id roleId,role_name roleName,role_describe roleDescribe from tb_role where is_delete = 0
+    </select>
+
+    <!--修改用户-->
+    <update id="updSysUser" parameterType="com.hl.schoolbar.entity.SysUser">
+        update tb_sys_user set
+        sys_username = #{sysUser.sysUsername},
+        role_id =  #{sysUser.roleId},
+        phone = #{sysUser.phone},
+        sex = #{sysUser.sex},
+        age = #{sysUser.age}
+        where sys_user_id =  #{sysUser.sysUserId} and is_delete = 0
+    </update>
+
+    <!--删除角色-->
+    <update id="delSysUserById" parameterType="java.lang.Integer">
+        update tb_sys_user set
+        is_delete = 1
+        where sys_user_id = #{id}
+    </update>
+</mapper>

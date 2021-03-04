@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hl.schoolbar.mapper.SchoolMapper">
+
+    <!--添加学校-->
+    <insert id="insSchool" parameterType="com.hl.schoolbar.entity.School">
+        insert into tb_school values (default ,#{school.schoolName},#{school.schoolDescribe},#{school.address},
+        #{school.imgId},#{school.createDate},#{school.isDelete})
+    </insert>
+
+    <!--修改学校-->
+    <update id="updSchool" parameterType="com.hl.schoolbar.entity.School">
+        update tb_school set school_name = #{school.schoolName},school_describe = #{school.schoolDescribe},
+        address = #{school.address},img_id = #{school.imgId} where is_delete=0 and school_id = #{school.schoolId}
+    </update>
+
+    <!--删除学校-->
+    <update id="delSchoolById" parameterType="java.lang.Integer">
+        update tb_school set is_delete = 1 where school_id=#{id}
+    </update>
+
+    <!--查询学校-->
+    <select id="selPageSchool" parameterType="com.hl.schoolbar.utils.SchoolQueryConditions" resultType="java.util.HashMap">
+        select school_id schoolId,school_name schoolName,school_describe schoolDescribe,image_url imgUrl,address,create_date createDate
+        from tb_school a
+        left join tb_img b on a.img_id = b.img_id
+        where is_delete = 0
+        <if test="schoolQueryConditions.schoolName!=null and schoolQueryConditions.schoolName!=''">
+            and school_name like  "%"#{schoolQueryConditions.schoolName}"%"
+        </if>
+    </select>
+</mapper>

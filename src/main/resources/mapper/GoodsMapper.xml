@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hl.schoolbar.mapper.GoodsMapper">
+
+    <!--分页查询商品-->
+    <select id="selPageGoods" resultType="java.util.HashMap" parameterType="com.hl.schoolbar.utils.GoodsQueryConditions">
+        select a.goods_id goodsId,
+        a.goods_name goodsName,
+        a.goods_describe goodsDescribe,
+        a.category_id categoryId,
+        a.price price,
+        a.qq_number qqNumber,
+        a.phone phone,
+        a.user_id userId,
+        a.school_id schoolId,
+        b.username username,
+        d.school_name  schoolName,
+        c.category_name categoryName,
+        a.create_date createDate,
+        a.is_show isShow
+        from tb_goods a
+        left join tb_user b on a.user_id = b.user_id
+        left join tb_category c on a.category_id = c.category_id
+        left join tb_school d on a.school_id = d.school_id
+        where a.is_delete = 0
+        <if test="goodsQueryConditions.goodsName !=null and goodsQueryConditions.goodsName !=''">
+            and a.goods_name like "%"#{goodsQueryConditions.goodsName}"%"
+        </if>
+        <if test="goodsQueryConditions.schoolId !=null and goodsQueryConditions.schoolId !=''">
+            and a.school_id  = #{goodsQueryConditions.schoolId}
+        </if>
+        <if test="goodsQueryConditions.userId !=null and goodsQueryConditions.userId !=''">
+            and a.user_id = #{goodsQueryConditions.userId}
+        </if>
+        <if test="goodsQueryConditions.categoryId !=null and goodsQueryConditions.categoryId !=''">
+            and a.category_id = #{goodsQueryConditions.categoryId}
+        </if>
+        <if test="goodsQueryConditions.isShow !=null and goodsQueryConditions.isShow !=''">
+            and a.is_show = #{goodsQueryConditions.isShow}
+        </if>
+
+    </select>
+
+    <!--添加商品-->
+    <insert id="insGoods" parameterType="com.hl.schoolbar.entity.Goods" keyProperty="goodsId" useGeneratedKeys="true">
+        insert into tb_goods values (default ,#{goods.goodsName},#{goods.goodsDescribe}
+        ,#{goods.categoryId},#{goods.price},#{goods.qqNumber}
+        ,#{goods.phone},#{goods.userId},#{goods.schoolId}
+        ,#{goods.createDate},#{goods.isShow},#{goods.isDelete})
+    </insert>
+
+    <!--删除商品-->
+    <update id="delGoodsById" parameterType="java.lang.Integer">
+        update tb_goods set is_delete = 1 where goods_id = #{id}
+    </update>
+
+    <!--修改商品-->
+    <update id="updGoods" parameterType="com.hl.schoolbar.entity.Goods">
+        update tb_goods set goods_name = #{goods.goodsName},
+        goods_describe = #{goods.goodsDescribe},
+        category_id = #{goods.categoryId},
+        price = #{goods.price},
+        qq_number = #{goods.qqNumber},
+        phone = #{goods.phone}
+        where goods_id = #{goods.goodsId}
+    </update>
+
+    <!--查询用户，方便查询商品-->
+    <select id="selAllUser" resultType="java.util.HashMap">
+        select user_id userId,
+        username username
+        from tb_user
+        where is_delete = 0
+    </select>
+
+    <!--修改商品状态-->
+    <update id="updGoodsIsShow">
+        update tb_goods set is_show = #{isShow}
+        where goods_id = #{id} and is_delete = 0
+    </update>
+
+    <!--查询所有子类别-->
+    <select id="selAllSonCategory" resultType="java.util.HashMap">
+        select category_id categoryId,
+        category_name categoryName
+        from tb_category
+        where category_pid != 0
+    </select>
+
+    <!--添加商品与图片的关联-->
+    <insert id="insGoodsAndImg" >
+        insert into tb_goods_img values
+        <foreach collection="imgList" item="item" separator=",">
+            (default ,#{goodsId},#{item.imgId})
+        </foreach>
+    </insert>
+
+    <!--查询商品图片-->
+    <select id="selImgListByGoodsId" parameterType="java.lang.Integer" resultType="com.hl.schoolbar.entity.Img">
+        select b.img_id ,b.image_url from tb_goods_img a left join tb_img b on a.img_id = b.img_Id
+        where a.good_id = #{goodsId}
+    </select>
+
+    <delete id="delGoodsImgByGoodsId" parameterType="java.lang.Integer">
+        delete from tb_goods_img where goods_id = #{goodsId}
+    </delete>
+</mapper>

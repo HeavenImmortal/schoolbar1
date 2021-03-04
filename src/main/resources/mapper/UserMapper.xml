@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hl.schoolbar.mapper.UserMapper">
+
+    <!--分页查询用户-->
+    <select id="selPageUser" parameterType="com.hl.schoolbar.utils.UserQueryConditions" resultType="java.util.HashMap">
+        select a.user_id userId,
+        a.user_account userAccount,
+        a.username username,
+        a.school_id schoolId,
+        a.email email,
+        a.phone phone,
+        a.sex sex,
+        a.age age,
+        a.create_date createDate,
+        b.school_name schoolName
+        from tb_user a
+        left join tb_school b on a.school_id = b.school_id
+        where a.is_delete = 0
+        <if test="userQueryConditions.username != null and userQueryConditions.username != ''">
+            and a.username like "%"#{userQueryConditions.username}"%"
+        </if>
+        <if test="userQueryConditions.schoolId != null and userQueryConditions.schoolId != ''">
+            and a.school_id = #{userQueryConditions.schoolId}
+        </if>
+        <if test="userQueryConditions.phone!=null and userQueryConditions.phone!=''">
+            and a.phone like "%"#{userQueryConditions.phone}"%"
+        </if>
+    </select>
+
+    <!--通过账户查询用户-->
+    <select id="selUserByUserAccount" parameterType="java.lang.String" resultType="java.util.HashMap">
+        select user_id userId,
+        user_account userAccount,
+        username username,
+        password password,
+        salt salt,
+        school_id schoolId,
+        avatar avatar
+        from tb_user
+        where user_account =#{userAccount} and is_delete=0
+    </select>
+
+    <!--添加用户-->
+    <insert id="insUser" parameterType="com.hl.schoolbar.entity.User">
+        insert into tb_user values (default,#{user.userAccount},
+        #{user.username},#{user.avater},#{user.password},#{user.salt},
+        #{user.schoolId},#{user.email},#{user.phone},
+        #{user.sex},#{user.age},#{user.createDate},
+        #{user.isDelete})
+    </insert>
+
+    <!--修改用户-->
+    <update id="updUser" parameterType="com.hl.schoolbar.entity.User">
+        update tb_user set username = #{user.username},school_id=#{user.schoolId},
+        email = #{user.email},phone = #{user.phone},sex = #{user.sex},age = #{user.age}
+        where user_id = #{user.userId}
+    </update>
+
+    <!--删除用户-->
+    <update id="delUserById" parameterType="java.lang.Integer">
+        update tb_user set is_delete = 1 where user_id = #{id}
+    </update>
+
+    <!--修改密码-->
+    <update id="updUserPassword">
+        update tb_user set password = #{password},salt = #{salt} where user_id = #{id}
+    </update>
+
+    <!--通过id查询用户-->
+    <select id="selUserById" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+        select user_id userId,
+        user_account userAccount,
+        password password,
+        salt salt
+        from tb_user
+        where is_delete = 0 and user_id = #{id}
+    </select>
+
+    <!--查询所有学校-->
+    <select id="selAllSchool" resultType="java.util.HashMap">
+        select school_id schoolId,
+        school_name schoolName
+        from tb_school
+        where is_delete = 0
+    </select>
+</mapper>

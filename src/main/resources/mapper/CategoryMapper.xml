@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hl.schoolbar.mapper.CategoryMapper">
+    <!--添加类别-->
+    <insert id="insCategory" parameterType="com.hl.schoolbar.entity.Category" >
+        insert into tb_category values (default ,#{category.categoryName},#{category.categoryPid});
+    </insert>
+
+    <!--根据id删除类别-->
+    <delete id="delCategoryById" parameterType="java.lang.Integer">
+        delete from tb_category where category_id=#{id}
+    </delete>
+
+    <!--查询所有类别-->
+    <select id="selAllCategory" resultType="com.hl.schoolbar.entity.Category">
+        select category_id,category_name,category_pid from tb_category where category_pid = 0;
+    </select>
+
+    <select id="selCategoryByPid" parameterType="java.lang.Integer" resultType="com.hl.schoolbar.entity.Category">
+        select category_id,category_name,category_pid from tb_category where category_pid = #{id}
+    </select>
+
+    <update id="updCategory" parameterType="com.hl.schoolbar.entity.Category">
+        update tb_category set category_name=#{category.categoryName},category_pid = #{category.categoryPid} where category_id = #{category.categoryId}
+    </update>
+</mapper>

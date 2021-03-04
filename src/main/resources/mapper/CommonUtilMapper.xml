@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hl.schoolbar.mapper.CommonUtilMapper">
+
+    <!--添加图片-->
+    <insert id="uploadFile" parameterType="com.hl.schoolbar.entity.Img" keyProperty="imgId" useGeneratedKeys="true">
+        insert into tb_img values (default ,#{img.imageUrl})
+    </insert>
+</mapper>

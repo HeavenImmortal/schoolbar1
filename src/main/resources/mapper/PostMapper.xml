@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hl.schoolbar.mapper.PostMapper">
+
+    <!--分页查询贴子-->
+    <select id="selPagePost" parameterType="com.hl.schoolbar.utils.PostQueryConditions" resultType="java.util.HashMap">
+        select a.post_id postId,
+        a.title title,
+        a.description description,
+        a.praise_num praiseNum,
+        a.step_on_num setpOnNum,
+        b.username username,
+        c.school_name schoolName
+        from tb_post a
+        left join tb_user b on a.user_id = b.user_id
+        left join tb_school  c on a.school_id = c.school_id
+        where a.is_delete = 0
+        <if test="postQueryConditions.userId!=null and postQueryConditions.userId!=''">
+            and a.user_id = #{postQueryConditions.userId}
+        </if>
+        <if test="postQueryConditions.schoolId!=null and postQueryConditions.schoolId!=''">
+            and a.school_id = #{postQueryConditions.schoolId}
+        </if>
+        <if test="postQueryConditions.title!=null and postQueryConditions.title!=''">
+            and a.title like "%"#{postQueryConditions.title}"%"
+        </if>
+        <if test="postQueryConditions.content!=null and postQueryConditions.content!=''">
+            and a.content like "%"#{postQueryConditions.content}"%"
+        </if>
+    </select>
+
+    <!--查看贴子详情-->
+    <select id="selPostInfoById" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+        select a.post_id postId,
+        a.title title,
+        a.description description,
+        a.content_mkd contentMkd,
+        a.content_html contentHtml,
+        a.praise_num praiseNum,
+        a.step_on_num setpOnNum,
+        b.username username,
+        c.school_name schoolName
+        from tb_post a
+        left join tb_user b on a.user_id = b.user_id
+        left join tb_school c on a.school_id = c.school_id
+        where a.is_delete = 0 and post_id = #{id}
+    </select>
+
+    <!--添加贴子-->
+    <insert id="insPost" parameterType="com.hl.schoolbar.entity.Post" useGeneratedKeys="true" keyProperty="postId">
+        insert into tb_post values (default ,#{post.title},#{post.description}
+        ,#{post.contentMkd},#{post.contentHtml},#{post.userId},#{post.schoolId},#{post.createDate}
+        ,#{post.praiseNum},#{post.stepOnNum},#{post.isDelete})
+    </insert>
+
+    <!--修改贴子-->
+    <update id="updPost" parameterType="com.hl.schoolbar.entity.Post">
+        update tb_post set title = #{post.title},description=#{post.description},content_mkd=#{post.contentMkd}
+        ,content_html=#{post.contentHtml}
+        where post_id = #{post.postId}
+    </update>
+
+    <!--删除贴子-->
+    <update id="delPost" parameterType="java.lang.Integer">
+        update tb_post set is_delete = 1 where post_id = #{id}
+    </update>
+
+    <!--查询评论数-->
+    <select id="selCommentNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select count(1) from tb_comment where post_id = #{postId}
+    </select>
+
+    <!--删除评论-->
+    <delete id="delCommentById" parameterType="java.lang.Integer">
+        delete from tb_comment where comment_id = #{id}
+    </delete>
+
+    <!--添加评论-->
+    <insert id="insComment" parameterType="com.hl.schoolbar.entity.Comment">
+        insert into tb_comment values (default ,#{comment.userId},
+        #{comment.content},#{comment.createDate},#{comment.postId},#{comment.commentPid},)
+    </insert>
+
+    <!--查询主评论-->
+    <select id="selParentComment" resultType="java.util.HashMap">
+        select
+        a.comment_id commentId,
+        a.user_id userId,
+        a.content content,
+        a.create_date createDate,
+        b.username username,
+        b.avatar avatar
+        from tb_comment a
+        left join tb_user b on a.user_id = b.user_id
+        where a.comment_pid = 0
+        and a.post_id = #{postId}
+        <if test="type==1">
+            order by a.create_date desc
+        </if>
+        <if test="type==0">
+            order by a.create_date desc
+        </if>
+    </select>
+
+    <!--查询子评论-->
+</mapper>

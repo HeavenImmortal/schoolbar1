@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hl.schoolbar.mapper.RoleMapper">
+
+    <!--查询所有角色-->
+    <select id="selAllRole" resultType="com.hl.schoolbar.entity.Role">
+        select role_id roleId,role_name roleName,role_describe roleDescribe from tb_role where is_delete = 0;
+    </select>
+
+    <!--添加角色-->
+    <insert id="insRole" parameterType="com.hl.schoolbar.entity.Role">
+        insert into tb_role values (default ,#{role.roleName},#{role.roleDescribe},#{role.isDelete})
+    </insert>
+
+    <!--删除角色-->
+    <update id="delRoleById" parameterType="java.lang.Integer">
+        update tb_role set is_delete = 1 where role_id = #{id}
+    </update>
+</mapper>
