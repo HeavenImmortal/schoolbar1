@@ -82,4 +82,11 @@ public interface PostService extends IService<Post> {
      * @return
      */
     Result gradeOperation(Integer userId,Integer postId,Integer type,Integer operationType);
+
+    /**
+     * 查询用户与评价过贴子的关联
+     * @param userId
+     * @return
+     */
+    Result selUserGradePost(Integer userId);
 }

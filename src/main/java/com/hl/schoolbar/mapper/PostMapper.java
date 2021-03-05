@@ -124,4 +124,10 @@ public interface PostMapper extends BaseMapper<Post> {
      */
     int delUserPostGrade(@Param("userId")Integer userId,@Param("postId")Integer postId,@Param("type")Integer type);
 
+    /**
+     * 查询用户与评价过的贴子关联
+     * @param userId
+     * @return
+     */
+    List<HashMap<String ,Object>> selUserGradePost(@Param("userId")Integer userId);
 }

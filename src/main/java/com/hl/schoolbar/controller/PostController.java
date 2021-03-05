@@ -167,7 +167,15 @@ public class PostController {
         return postServiceImpl.selComment(postId, type);
     }
 
-    @ApiOperation(value="查询评论", notes="get请求")
+    /**
+     * 点赞点踩操作
+     * @param userId
+     * @param postId
+     * @param type 1点赞数 0 点踩数
+     * @param operationType 1 点击 0取消
+     * @return
+     */
+    @ApiOperation(value="点赞点踩操作", notes="get请求")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType="query", name = "postId", value = "贴子id", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "userId", value = "用户id", required = true, dataType = "Integer"),
@@ -177,5 +185,14 @@ public class PostController {
     @RequestMapping(value = "/gradeOperation",method = RequestMethod.GET)
     public Result gradeOperation(Integer userId, Integer postId, Integer type, Integer operationType){
         return postServiceImpl.gradeOperation(userId, postId, type, operationType);
+    }
+
+    @ApiOperation(value="点赞点踩操作", notes="get请求")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType="query", name = "userId", value = "用户id", required = true, dataType = "Integer"),
+    })
+    @RequestMapping(value = "/selUserGradePost",method = RequestMethod.GET)
+    public Result selUserGradePost(Integer userId){
+        return postServiceImpl.selUserGradePost(userId);
     }
 }

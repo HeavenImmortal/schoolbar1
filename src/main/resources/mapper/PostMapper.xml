@@ -8,6 +8,7 @@
         a.title title,
         a.description description,
         b.username username,
+        b.avatar avatar,
         c.school_name schoolName
         from tb_post a
         left join tb_user b on a.user_id = b.user_id
@@ -72,7 +73,7 @@
 
     <!--查询点踩数-->
     <select id="selPostStepOnNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
-        select count(1) from tb_post_grade where type = 1 and post_id = #{postId};
+        select count(1) from tb_post_grade where type = 0 and post_id = #{postId};
     </select>
 
     <!--删除评论-->
@@ -111,11 +112,15 @@
 
     <!--用户点赞或点踩-->
     <insert id="insUserPostGrade">
-        insert into tb_post_grade values (default ,#{userId},#{postId},#{type})
+        insert into tb_post_grade values (#{userId},#{postId},#{type})
     </insert>
 
     <!--用户取消点赞或点踩-->
     <delete id="delUserPostGrade" >
         delete from tb_post_grade where type=#{type} and user_id=#{userId} and post_id = #{postId}
     </delete>
+
+    <select id="selUserGradePost" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+        select post_id postId,type type  from tb_post_grade where user_id = #{userId}
+    </select>
 </mapper>

@@ -70,7 +70,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
             postList.get(i).put("commentNum",commentNum);
             int praiseNum = postMapper.selPostPraiseNum(postId);
             postList.get(i).put("praiseNum",praiseNum);
-            int setpOnNum = postMapper.selPostPraiseNum(postId);
+            int setpOnNum = postMapper.selPostStepOnNum(postId);
             postList.get(i).put("setpOnNum",setpOnNum);
         }
 
@@ -222,5 +222,16 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
            e.printStackTrace();
             return Result.error("系统异常");
        }
+    }
+
+    /**
+     * 查询用户与评价贴子的关联
+     * @param userId
+     * @return
+     */
+    @Override
+    public Result selUserGradePost(Integer userId) {
+        List<HashMap<String ,Object>> gradePostList = postMapper.selUserGradePost(userId);
+        return Result.ok().put("gradePostList",gradePostList);
     }
 }
