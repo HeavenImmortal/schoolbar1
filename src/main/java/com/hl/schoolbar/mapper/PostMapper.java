@@ -87,9 +87,10 @@ public interface PostMapper extends BaseMapper<Post> {
     /**
      * 查询子评论
      * @param commentPid
+     * @param postId
      * @return
      */
-    List<HashMap<String ,Object>> selSonCommentByCommentPid(@Param("commentPid")Integer commentPid);
+    List<HashMap<String ,Object>> selSonCommentByCommentPid(@Param("commentPid")Integer commentPid,@Param("postId")Integer postId);
 
     /**
      * 删除评论
@@ -130,4 +131,11 @@ public interface PostMapper extends BaseMapper<Post> {
      * @return
      */
     List<HashMap<String ,Object>> selUserGradePost(@Param("userId")Integer userId);
+
+    /**
+     * 查询楼层
+     * @param postId
+     * @return
+     */
+    int selectFloorByPostId(@Param("postId")Integer postId);
 }

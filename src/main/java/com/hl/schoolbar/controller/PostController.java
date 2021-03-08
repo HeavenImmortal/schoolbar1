@@ -144,7 +144,8 @@ public class PostController {
             @ApiImplicitParam(paramType="query", name = "userId", value = "用户id", required = true, dataType = "Integer"),
             @ApiImplicitParam(paramType="query", name = "content", value = "评论内容", required = true, dataType = "String"),
             @ApiImplicitParam(paramType="query", name = "postId", value = "贴子id", required = true, dataType = "Integer"),
-            @ApiImplicitParam(paramType="query", name = "commentPid", value = "回复pid", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "commentPid", value = "回复主评论id", required = true, dataType = "Integer"),
+            @ApiImplicitParam(paramType="query", name = "replyId", value = "回复的id", required = true, dataType = "Integer"),
     })
     @RequestMapping(value = "/insComment",method = RequestMethod.POST)
     public Result insComment(@RequestBody Comment comment){

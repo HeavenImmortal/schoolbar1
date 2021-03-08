@@ -44,7 +44,7 @@
     <!--添加用户-->
     <insert id="insUser" parameterType="com.hl.schoolbar.entity.User">
         insert into tb_user values (default,#{user.userAccount},
-        #{user.username},#{user.avater},#{user.password},#{user.salt},
+        #{user.username},#{user.avatar},#{user.password},#{user.salt},
         #{user.schoolId},#{user.email},#{user.phone},
         #{user.sex},#{user.age},#{user.createDate},
         #{user.isDelete})

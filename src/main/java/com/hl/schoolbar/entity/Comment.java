@@ -33,6 +33,11 @@ public class Comment implements Serializable {
     private Integer userId;
 
     /**
+     * 楼层
+     */
+    private Integer floor;
+
+    /**
      * 评论内容
      */
     private String content;
@@ -51,6 +56,11 @@ public class Comment implements Serializable {
      * 回复评论id
      */
     private Integer commentPid;
+
+    /**
+     * 回复id
+     */
+    private Integer replyId;
 
 
 }

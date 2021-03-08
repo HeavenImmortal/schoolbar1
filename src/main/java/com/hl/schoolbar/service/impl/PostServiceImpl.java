@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.hl.schoolbar.utils.PageBuilder;
 import com.hl.schoolbar.utils.Result;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.annotation.Resource;
@@ -126,6 +127,13 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
     @Override
     public Result selPostInfoById(Integer id) {
         HashMap<String ,Object> postInfo = postMapper.selPostInfoById(id);
+        int postId = Integer.parseInt(postInfo.get("postId").toString());
+        int commentNum = postMapper.selCommentNum(postId);
+        postInfo.put("commentNum",commentNum);
+        int praiseNum = postMapper.selPostPraiseNum(postId);
+        postInfo.put("praiseNum",praiseNum);
+        int setpOnNum = postMapper.selPostStepOnNum(postId);
+        postInfo.put("setpOnNum",setpOnNum);
         return Result.ok().put("postInfo",postInfo);
     }
 
@@ -158,7 +166,11 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
     public Result insComment(Comment comment) {
         try{
             comment.setCreateDate(System.currentTimeMillis());
-
+            int floor = 1;
+            if(comment.getReplyId()==0){
+                floor = postMapper.selectFloorByPostId(comment.getPostId());
+            }
+            comment.setFloor(floor);
             int i = postMapper.insComment(comment);
             if(i==1){
                 return Result.ok();
@@ -180,6 +192,15 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post> implements Po
     @Override
     public Result selComment(Integer postId, Integer type) {
         List<HashMap<String ,Object>> commentList = postMapper.selParentComment(postId,type);
+        commentList.forEach(e->{
+            int commentPid = Integer.parseInt(e.get("commentId").toString());
+            List<HashMap<String ,Object>> sonCommentList = postMapper.selSonCommentByCommentPid(commentPid,postId);
+            e.put("isHasSonComment",false);
+            if(sonCommentList.size()!=0){
+                e.put("isHasSonComment",true);
+            }
+            e.put("sonCommentList",sonCommentList);
+        });
         return Result.ok().put("commentList",commentList);
     }
 

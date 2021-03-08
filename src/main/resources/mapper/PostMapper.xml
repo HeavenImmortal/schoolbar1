@@ -9,7 +9,8 @@
         a.description description,
         b.username username,
         b.avatar avatar,
-        c.school_name schoolName
+        c.school_name schoolName,
+        a.create_date createDate
         from tb_post a
         left join tb_user b on a.user_id = b.user_id
         left join tb_school  c on a.school_id = c.school_id
@@ -32,10 +33,12 @@
     <select id="selPostInfoById" parameterType="java.lang.Integer" resultType="java.util.HashMap">
         select a.post_id postId,
         a.title title,
+        a.user_id userId,
         a.description description,
         a.content_mkd contentMkd,
         a.content_html contentHtml,
         b.username username,
+        b.avatar avatar,
         c.school_name schoolName
         from tb_post a
         left join tb_user b on a.user_id = b.user_id
@@ -83,15 +86,20 @@
 
     <!--添加评论-->
     <insert id="insComment" parameterType="com.hl.schoolbar.entity.Comment">
-        insert into tb_comment values (default ,#{comment.userId},
-        #{comment.content},#{comment.createDate},#{comment.postId},#{comment.commentPid},)
+        insert into tb_comment values (default ,#{comment.userId},#{comment.floor},#{comment.content},#{comment.createDate},#{comment.postId},#{comment.commentPid},#{comment.replyId})
     </insert>
+
+    <select id="selectFloorByPostId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select coalesce(Max(floor)+1,0) from tb_comment where post_id = #{postId} and comment_pid = 0 and
+        reply_id = 0
+    </select>
 
     <!--查询主评论-->
     <select id="selParentComment" resultType="java.util.HashMap">
         select
         a.comment_id commentId,
         a.user_id userId,
+        a.floor floor,
         a.content content,
         a.create_date createDate,
         b.username username,
@@ -104,11 +112,31 @@
             order by a.create_date desc
         </if>
         <if test="type==0">
-            order by a.create_date desc
+            order by a.create_date
         </if>
     </select>
 
     <!--查询子评论-->
+    <select id="selSonCommentByCommentPid"  resultType="java.util.HashMap">
+       select
+        a.comment_id commentId,
+        a.user_id userId,
+        a.content content,
+        a.create_date createDate,
+        b.username username,
+        b.avatar avatar,
+        a.reply_id replyId,
+		d.username replyUsername
+        from tb_comment a
+        left join tb_user b on a.user_id = b.user_id
+		left join tb_comment c on a.reply_id = c.comment_id
+		left join tb_user d on c.user_id = d.user_id
+        where a.comment_pid = #{commentPid}
+        and a.post_id = #{postId}
+        order by a.create_date
+
+    </select>
+
 
     <!--用户点赞或点踩-->
     <insert id="insUserPostGrade">
@@ -120,6 +148,7 @@
         delete from tb_post_grade where type=#{type} and user_id=#{userId} and post_id = #{postId}
     </delete>
 
+    <!--查询用户评论过的贴子id-->
     <select id="selUserGradePost" parameterType="java.lang.Integer" resultType="java.util.HashMap">
         select post_id postId,type type  from tb_post_grade where user_id = #{userId}
     </select>
